@@ -1,8 +1,11 @@
+import 'dart:math' as math;
+
 import 'package:first_game/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
 
 enum Direction { none, up, right, down, left }
+enum LookingAt { right, left }
 
 class PlayerComponent extends SpriteAnimationComponent with HasGameRef<World> {
   PlayerComponent({required this.audioPlayerComponent});
@@ -11,6 +14,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<World> {
   late Vector2 _initPosition;
   late SpriteSheet _sheet;
 
+  LookingAt _lookingAt = LookingAt.right;
   Direction direction = Direction.none;
   final AudioPlayerComponent audioPlayerComponent;
 
@@ -27,12 +31,12 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<World> {
     super.onLoad();
     _sheet = SpriteSheet(
       image: await gameRef.images.load('mario.png'),
-      srcSize: Vector2(30, 36),
+      srcSize: Vector2(29, 37),
     );
 
     _loadAnimations().then((_) => animation = _standingAnimation);
 
-    _initSize = Vector2.all(100);
+    _initSize = Vector2(70, 80);
     _initPosition = Vector2(100, 640);
 
     size = _initSize;
@@ -48,14 +52,30 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<World> {
   Future<void> _loadAnimations() async {
     _standingAnimation =
         _sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 1);
-    _runUpAnimation =
-        _sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
-    _runRightAnimation =
-        _sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
-    _runDownAnimation =
-        _sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
-    _runLeftAnimation =
-        _sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
+    _runUpAnimation = _sheet.createAnimation(
+      row: 2,
+      stepTime: _animationSpeed,
+      from: 7,
+      to: 8,
+    );
+    _runRightAnimation = _sheet.createAnimation(
+      row: 2,
+      stepTime: _animationSpeed,
+      from: 2,
+      to: 4,
+    );
+    _runDownAnimation = _sheet.createAnimation(
+      row: 3,
+      stepTime: _animationSpeed,
+      from: 4,
+      to: 5,
+    );
+    _runLeftAnimation = _sheet.createAnimation(
+      row: 2,
+      stepTime: _animationSpeed,
+      from: 2,
+      to: 4,
+    );
   }
 
   void _movePlayer(double dt) {
@@ -110,13 +130,21 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<World> {
 
   void _moveRight(double dt) {
     position.add(Vector2(dt * _playerSpeed, 0));
+    if (_lookingAt == LookingAt.left) {
+      _lookingAt = LookingAt.right;
+      flipHorizontally();
+    }
   }
 
   void _moveDown(double dt) {
-    position.add(Vector2(0, 10));
+    position.add(Vector2(0, 2));
   }
 
   void _moveLeft(double dt) {
     position.add(Vector2(-dt * _playerSpeed, 0));
+    if (_lookingAt == LookingAt.right) {
+      _lookingAt = LookingAt.left;
+      flipHorizontally();
+    }
   }
 }
