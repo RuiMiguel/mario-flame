@@ -12,7 +12,7 @@ class World extends FlameGame
   late AudioPlayerComponent _audioPlayerComponent;
   late PauseComponent _pauseComponent;
   late PlayerComponent _playerComponent;
-  late EnemyComponent _enemyComponent;
+  late EnemyManager _enemyManager;
   bool running = true;
 
   @override
@@ -31,12 +31,12 @@ class World extends FlameGame
     _audioPlayerComponent = AudioPlayerComponent();
     await add(_audioPlayerComponent);
 
+    _enemyManager = EnemyManager();
+    await add(_enemyManager);
+
     _playerComponent =
         PlayerComponent(audioPlayerComponent: _audioPlayerComponent);
     await add(_playerComponent);
-
-    _enemyComponent = EnemyComponent();
-    await add(_enemyComponent);
 
     _pauseComponent = PauseComponent();
     await add(_pauseComponent);
@@ -61,11 +61,9 @@ class World extends FlameGame
         }
         if (event.data.logicalKey == LogicalKeyboardKey.arrowLeft) {
           _playerComponent.direction = Direction.left;
-          _enemyComponent.direction = Direction.left;
         }
         if (event.data.logicalKey == LogicalKeyboardKey.arrowRight) {
           _playerComponent.direction = Direction.right;
-          _enemyComponent.direction = Direction.right;
         }
         if (event.data.logicalKey == LogicalKeyboardKey.space) {
           _playerComponent.direction = Direction.up;
