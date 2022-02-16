@@ -35,6 +35,30 @@ class GameView extends StatelessWidget {
             },
           ),
           const Align(
+            alignment: Alignment.topLeft,
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: 10,
+                left: 30,
+              ),
+              child: LifeBar(
+                lives: 5,
+              ),
+            ),
+          ),
+          Align(
+            alignment: Alignment.topCenter,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: 10,
+                right: 30,
+              ),
+              child: Score(
+                points: 000000,
+              ),
+            ),
+          ),
+          const Align(
             alignment: Alignment.topRight,
             child: Padding(
               padding: EdgeInsets.only(

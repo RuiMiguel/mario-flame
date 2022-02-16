@@ -38,9 +38,6 @@ class World extends FlameGame
         PlayerComponent(audioPlayerComponent: _audioPlayerComponent);
     await add(_playerComponent);
 
-    _pauseComponent = PauseComponent();
-    await add(_pauseComponent);
-
     await super.onLoad();
   }
 
