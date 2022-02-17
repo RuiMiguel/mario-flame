@@ -19,15 +19,13 @@ class EnemyComponent extends SpriteAnimationComponent with HasGameRef<World> {
   final double _enemySpeed = 80;
   final double _animationSpeed = 0.15;
   late final SpriteAnimation _standingAnimation;
-  late final SpriteAnimation _runUpAnimation;
-  late final SpriteAnimation _runRightAnimation;
-  late final SpriteAnimation _runDownAnimation;
-  late final SpriteAnimation _runLeftAnimation;
+  late final SpriteAnimation _moveRightAnimation;
+  late final SpriteAnimation _moveLeftAnimation;
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
-    _loadAnimations().then((_) => animation = _standingAnimation);
+    await super.onLoad();
+    await _loadAnimations().then((_) => animation = _standingAnimation);
 
     size = initialSize;
     position = initialPosition;
@@ -42,13 +40,9 @@ class EnemyComponent extends SpriteAnimationComponent with HasGameRef<World> {
   Future<void> _loadAnimations() async {
     _standingAnimation =
         sheet.createAnimation(row: 0, stepTime: _animationSpeed, to: 1);
-    _runUpAnimation =
+    _moveRightAnimation =
         sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
-    _runRightAnimation =
-        sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
-    _runDownAnimation =
-        sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
-    _runLeftAnimation =
+    _moveLeftAnimation =
         sheet.createAnimation(row: 2, stepTime: _animationSpeed, to: 4);
   }
 
@@ -57,7 +51,7 @@ class EnemyComponent extends SpriteAnimationComponent with HasGameRef<World> {
       switch (direction) {
         case Direction.right:
           if (_canMoveRight()) {
-            animation = _runRightAnimation;
+            animation = _moveRightAnimation;
             _moveRight(dt);
           } else {
             direction = Direction.left;
@@ -65,13 +59,15 @@ class EnemyComponent extends SpriteAnimationComponent with HasGameRef<World> {
           break;
         case Direction.left:
           if (_canMoveLeft()) {
-            animation = _runLeftAnimation;
+            animation = _moveLeftAnimation;
             _moveLeft(dt);
           } else {
             direction = Direction.right;
           }
           break;
-        default:
+        case Direction.none:
+        case Direction.up:
+        case Direction.down:
           break;
       }
     }

@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:first_game/game/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/sprite.dart';
@@ -28,13 +26,13 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<World> {
 
   @override
   Future<void>? onLoad() async {
-    super.onLoad();
+    await super.onLoad();
     _sheet = SpriteSheet(
       image: await gameRef.images.load('mario.png'),
       srcSize: Vector2(29, 37),
     );
 
-    _loadAnimations().then((_) => animation = _standingAnimation);
+    await _loadAnimations().then((_) => animation = _standingAnimation);
 
     _initSize = Vector2(70, 80);
     _initPosition = Vector2(100, 640);

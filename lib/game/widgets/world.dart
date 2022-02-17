@@ -10,7 +10,6 @@ class World extends FlameGame
     implements KeyboardEvents {
   late BackgroundComponent _backgroundComponent;
   late AudioPlayerComponent _audioPlayerComponent;
-  late PauseComponent _pauseComponent;
   late PlayerComponent _playerComponent;
   late EnemyManager _enemyManager;
   bool running = true;
