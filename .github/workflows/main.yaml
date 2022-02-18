@@ -9,7 +9,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-
       - name: Cache Flutter artifacts
         id: cache
         uses: actions/cache@v2
