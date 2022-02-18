@@ -13,7 +13,7 @@ jobs:
         with:
           flutter-version: "2.10.0"
           channel: "stable"
-          cache: true
+          cache: false
 
       - name: Install Dependencies
         run: |
