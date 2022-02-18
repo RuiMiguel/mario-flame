@@ -11,14 +11,25 @@ jobs:
 
 
       - name: Cache Flutter artifacts
+        id: cache
         uses: actions/cache@v2
         env:
           cache-name: cache-flutter-dependencies
         with:
-          key: "FAKE_CACHE_KEY"
+          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}"
           path: |
             "./.dart_tool"
             "~/.pub-cache"
+
+      - name: Check cache fails
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo FAIL
+
+      - name: Check cache succeed
+        if: steps.cache.outputs.cache-hit == 'true'
+        run: |
+          echo SUCCESS
 
       - uses: subosito/flutter-action@v2
         with:
