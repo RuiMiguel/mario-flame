@@ -9,6 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache Flutter artifacts
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-flutter-dependencies
+        with:
+          key: "FAKE_CACHE_KEY"
+          path: |
+            "./.dart_tool"
+            "~/.pub-cache"
+
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "2.10.0"
