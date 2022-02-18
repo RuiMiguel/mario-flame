@@ -1,6 +1,19 @@
-name: first_game
+name: mario_cli
 
-on: [pull_request, push]
+pull_request:
+    paths:
+      - ".github/workflows/main.yaml"
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/main.yaml"
+      - "lib/**"
+      - "test/**"
+      - "pubspec.yaml"
 
 jobs:
   build:
@@ -9,91 +22,30 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-
-      - name: Cache Flutter artifacts
-        id: cache
-        uses: actions/cache@v1
-        env:
-          cache-name: cache-flutter-dependencies
-        with:
-          key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}"
-          path: |
-            "./.dart_tool"
-            "~/.pub-cache"
-
-      - name: Check cache fails
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo FAIL
-
-      - name: Check cache succeed
-        if: steps.cache.outputs.cache-hit == 'true'
-        run: |
-          echo SUCCESS
-
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: "2.10.0"
           channel: "stable"
           cache: true
-          cache-key: "${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}"
+          cache-key: "${{ runner.os }}-build-${{ hashFiles('**/pubspec.lock') }}"
           cache-path: |
-            "./.dart_tool"
-            "~/.pub-cache"
+            ./.dart_tool
+            ~/.pub-cache
 
       - name: Install Dependencies
-        run: |
-          flutter pub global activate very_good_cli
-          very_good --analytics false
-          very_good packages get --recursive
-
-      - name: Debug
-        run: |
-          ls -a ~/.pub-cache
-          ls -a ./.dart_tool
+        run: flutter pub get
 
       - name: Format
-        run: flutter format --set-exit-if-changed lib test
+        run: flutter format --set-exit-if-changed .
 
       - name: Analyze
-        uses: invertase/github-action-dart-analyzer@v1
-        with:
-          fatal-infos: true
-          fatal-warnings: true
-          annotate: true
-          annotate-only: false
-          working-directory: .
+        run: flutter analyze lib test
 
-      - name: Verify
-        run: flutter test -t presubmit-only
+      - name: Verify Build
+        run: flutter pub run test --run-skipped -t pull-request-only
 
-      - name: Run tests
-        run: flutter test -x presubmit-only --no-pub --coverage --test-randomize-ordering-seed random
+      - name: Run Tests
+        run: flutter test -x pull-request-only -x e2e --no-pub --coverage --test-randomize-ordering-seed random
 
       - name: Check Code Coverage
         uses: VeryGoodOpenSource/very_good_coverage@v1.2.0
-        with:
-          exclude: "**/*.g.dart **/*.gen.dart **/l10n/*.dart **/l10n/**/*.dart **/*camera_repository_platform.dart **/*camera_repository_controller.dart **/*analyzer.dart **/main/bootstrap.dart"
-          path: coverage/lcov.info
-
-      - name: Generate Visual Architecture
-        env:
-          FLUTTER_DART_HOME: $/bin/cache/dart-sdk/bin
-          FLUTTER_PUB_CACHE: $/.pub-cache/bin
-        run: |
-          flutter pub global activate pubviz
-          export PATH=$PATH:$FLUTTER_DART_HOME
-          export PATH=$PATH:$FLUTTER_PUB_CACHE
-          pubviz print -d > pubviz.html
-
-      - name: Upload Visual Architecture Artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: visual-architecture-report
-          path: ./pubviz.html
-
-      - name: Debug
-        run: |
-          ls -a ~/.pub-cache
-          ls -a ./.dart_tool
-          echo $PUB_CACHE
