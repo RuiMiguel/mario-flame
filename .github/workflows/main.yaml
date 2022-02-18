@@ -15,7 +15,7 @@ jobs:
           flutter-version: "2.10.0"
           channel: "stable"
           cache: true
-          cache-key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('**/pubspec.lock') }}
+          cache-key: "FLUTTER_CACHE_KEY"
           cache-path: |
             "./.dart_tool"
             "~/.pub-cache"
