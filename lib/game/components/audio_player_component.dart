@@ -16,11 +16,12 @@ class AudioPlayerComponent extends Component {
       'overworld.mp3',
       'underground.mp3',
     ]);
+
     return super.onLoad();
   }
 
   void playBgm() {
-    FlameAudio.bgm.play('overworld.mp3');
+    FlameAudio.bgm.play('overworld.mp3', volume: .5);
   }
 
   void resumeBgm() {

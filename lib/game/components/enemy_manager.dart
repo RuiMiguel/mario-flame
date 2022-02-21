@@ -22,7 +22,7 @@ class EnemyManager extends Component with HasGameRef<World> {
         );
       final enemy = EnemyComponent(
         sheet: SpriteSheet(
-          image: await gameRef.images.load('goomba.png'),
+          image: gameRef.images.fromCache('goomba.png'),
           srcSize: Vector2(88, 92),
         ),
         initialSize: initialSize,

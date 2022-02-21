@@ -28,7 +28,7 @@ class PlayerComponent extends SpriteAnimationComponent with HasGameRef<World> {
   Future<void>? onLoad() async {
     await super.onLoad();
     _sheet = SpriteSheet(
-      image: await gameRef.images.load('mario.png'),
+      image: gameRef.images.fromCache('mario.png'),
       srcSize: Vector2(29, 37),
     );
 
